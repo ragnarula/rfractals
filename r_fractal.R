@@ -13,7 +13,7 @@ getFractalRanges <- function(file, interval){
         print("finding lows")
         data$lofrac <- isLowFractal(data$low,interval)
         print("getting ranges")
-        res <- fracRange(data$high, data$low, data$hifrac, data$lofrac)
+        res <- fracRange(data)
         res
 }
 
@@ -22,9 +22,9 @@ getFractalRanges <- function(file, interval){
 readData <- function(file){
         data <- read.csv(file, header = FALSE)
         colnames(data) <- c("symbol","datetime","open","high","low","close","volume")
-        data$datetime <- strptime(data$datetime, format = "%m/%d/%Y %H:%M:%S")
-        data$hour <- cut(data$datetime, breaks = "hour")
-        data$day <- cut(data$datetime, breaks = "day")
+        data$datetime <- strptime(data$datetime, format = "%m/%d/%Y %H:%M")
+        data$hour <- as.factor(format(data$datetime, "%H"))
+        data$month <- as.factor(format(data$datetime, "%m"))
         data
 }
 
@@ -42,7 +42,7 @@ isHighFractal <- function(series, constant){
                         }
                 }
                 #set true only is the current bar is the highest in the range
-                if(i == highest){
+                if(series[i] == series[highest]){
                       result[i] <- TRUE  
                 } else {
                         result[i] <- FALSE
@@ -70,7 +70,7 @@ isLowFractal <- function(series, constant){
                                 lowest <- j
                         }
                 }
-                if(i == lowest){
+                if(series[i] == series[lowest]){
                         result[i] <- TRUE  
                 } else {
                         result[i] <- FALSE
@@ -87,8 +87,12 @@ isLowFractal <- function(series, constant){
         result
 }
 
+#wrapper for the function below, to make compatible with 'by' function
+fracRange <- function(data){
+        fracRange2(data$high,data$low,data$hifrac,data$lofrac)
+}
 #returns a vector of the absolute difference between consecutive low and high fractals.
-fracRange <- function(high, low, hifrac, lofrac){
+fracRange2 <- function(high, low, hifrac, lofrac){
         result <- numeric()
         for(i in 1:length(high)){
                 if(!hifrac[i] && !lofrac[i]){
@@ -104,7 +108,12 @@ fracRange <- function(high, low, hifrac, lofrac){
                                         break
                                 }
                                 if(lofrac[j]){
-                                        lowest <- j
+                                        if(is.na(lowest)){
+                                                lowest <- j
+                                        } else if (low[j] < low[lowest]){
+                                                lowest <- j
+                                        }
+                                        
                                 }
                                 #break if new hi fractal is found.
                                 if(j != hi && hifrac[j]){
@@ -113,9 +122,10 @@ fracRange <- function(high, low, hifrac, lofrac){
                         }
                         if(!is.na(lowest)){
                                 range <- high[hi] - low[lowest]
-                                result <- c(result, range)
-                                if(range < 0){
-                                        print(paste("lowfrac", range,hi,lowest))
+                                #add result only if the range is greater than 0
+                                #sometimes slow markets produce backwards fractals
+                                if(range > 0){
+                                        result <- c(result, range)
                                 }
                         }
                 }
@@ -129,7 +139,12 @@ fracRange <- function(high, low, hifrac, lofrac){
                                         break
                                 }
                                 if(hifrac[j]){
-                                        highest <- j
+                                        if(is.na(highest)){
+                                                highest <- j
+                                        } else if (high[j] > high[highest]){
+                                                highest <- j
+                                        }
+                                        
                                 }
                                 #break if new low fractal is found
                                 if(j != lo && lofrac[j]){
@@ -138,9 +153,10 @@ fracRange <- function(high, low, hifrac, lofrac){
                         }
                         if(!is.na(highest)){
                                 range <- high[highest] - low[lo]
-                                result <- c(result, range)
-                                if(range < 0){
-                                        print(paste("hifrac", range,hi,lowest))
+                                #add result only if the range is greater than 0
+                                #sometimes slow markets produce backwards fractals
+                                if(range > 0){
+                                        result <- c(result, range)
                                 }
                         }
                 }
