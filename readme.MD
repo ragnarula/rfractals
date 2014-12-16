@@ -28,4 +28,4 @@ In this case:
 3. Bars which are the lowest low of the previous 3 and following 3 bars are found.
 4. The ranges between the high and low fractals are returned as a numeric vector.
 
-The data can then be plotted using the command: ```plot(table(result))```
+The data can then be plotted using the command: ```plot(table(result))``` .
