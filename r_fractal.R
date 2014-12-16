@@ -112,7 +112,11 @@ fracRange <- function(high, low, hifrac, lofrac){
                                 }
                         }
                         if(!is.na(lowest)){
-                                result <- c(result, high[hi] - low[lowest])
+                                range <- high[hi] - low[lowest]
+                                result <- c(result, range)
+                                if(range < 0){
+                                        print(paste("lowfrac", range,hi,lowest))
+                                }
                         }
                 }
                 if(lofrac[i]){
@@ -127,13 +131,17 @@ fracRange <- function(high, low, hifrac, lofrac){
                                 if(hifrac[j]){
                                         highest <- j
                                 }
-                                #break is new low fractal is found
+                                #break if new low fractal is found
                                 if(j != lo && lofrac[j]){
                                         break
                                 }
                         }
                         if(!is.na(highest)){
-                                result <- c(result, high[highest] - low[lo])
+                                range <- high[highest] - low[lo]
+                                result <- c(result, range)
+                                if(range < 0){
+                                        print(paste("hifrac", range,hi,lowest))
+                                }
                         }
                 }
         }
