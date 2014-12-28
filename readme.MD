@@ -31,6 +31,7 @@ In this case:
 4. The returned data is factored by month.
 
 The first 4 columns of the returned data are:
+
 1. Symbol
 2. Mean - mean value of high-low ranges.
 3. Median - median value of high-low ranges.
@@ -39,7 +40,7 @@ The first 4 columns of the returned data are:
 The next 10 columns hold the values returned from the quantile function, splits in to 10 groups.
 
 ###### Example Output
-Example output from 'fracStatsBy("hourly_eurusd.csv",3,c("month"))'
+Example output from `fracStatsBy("hourly_eurusd.csv",3,c("month"))`
 
            month        mean  median   mode          sd     0%    10%    20%    30%    40%    50%    60%    70%    80%    90%   100%
     1     01 0.006780737 0.00530 0.0040 0.005108420 0.0007 0.0023 0.0029 0.0037 0.0045 0.0053 0.0063 0.0077 0.0098 0.0129 0.0464
