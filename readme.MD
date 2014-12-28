@@ -33,9 +33,10 @@ In this case:
 The first 4 columns of the returned data are:
 
 1. Symbol
-2. Mean - mean value of high-low ranges.
-3. Median - median value of high-low ranges.
-4. Mode - the most frequent high-low range.
+2. mean - mean value of high-low ranges.
+3. median - median value of high-low ranges.
+4. mode - the most frequent high-low range.
+5. sd - standard deviation of the high-low ranges.
 
 The next 10 columns hold the values returned from the quantile function, splits in to 10 groups.
 
